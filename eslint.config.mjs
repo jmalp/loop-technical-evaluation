@@ -36,4 +36,24 @@ export default defineConfig(
       'playwright/no-wait-for-timeout': 'error',
     },
   },
+  {
+    // Page objects and fixtures drive the page too, so they get the Playwright rules that
+    // make sense outside test files (NFR-04, NFR-05), as errors. Test-only rules such as
+    // expect-expect and no-standalone-expect stay limited to tests/**.
+    files: ['src/**'],
+    plugins: {
+      playwright: playwright.configs['flat/recommended'].plugins.playwright,
+    },
+    rules: {
+      'playwright/missing-playwright-await': 'error',
+      'playwright/no-element-handle': 'error',
+      'playwright/no-eval': 'error',
+      'playwright/no-force-option': 'error',
+      'playwright/no-networkidle': 'error',
+      'playwright/no-page-pause': 'error',
+      'playwright/no-wait-for-selector': 'error',
+      'playwright/no-wait-for-timeout': 'error',
+      'playwright/prefer-web-first-assertions': 'error',
+    },
+  },
 );
