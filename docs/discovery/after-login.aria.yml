@@ -1,0 +1,64 @@
+- img
+- heading "Projects" [level=1]
+- navigation:
+  - button "Web Application Main web application development":
+    - heading "Web Application" [level=2]
+    - paragraph: Main web application development
+  - button "Mobile Application Native mobile app development":
+    - heading "Mobile Application" [level=2]
+    - paragraph: Native mobile app development
+  - button "Marketing Campaign Q2 Marketing initiatives":
+    - heading "Marketing Campaign" [level=2]
+    - paragraph: Q2 Marketing initiatives
+- banner:
+  - heading "Web Application" [level=1]
+  - paragraph: Main web application development
+  - button "Logout":
+    - img
+    - text: Logout
+- main:
+  - heading "To Do (2)" [level=2]
+  - heading "Implement user authentication" [level=3]
+  - paragraph: Add login and signup functionality
+  - text: Feature High Priority
+  - img
+  - text: Sarah Chen
+  - img
+  - text: 3/24/2024
+  - heading "Fix navigation bug" [level=3]
+  - paragraph: Menu does not close on mobile
+  - text: Bug
+  - img
+  - text: John Smith
+  - img
+  - text: 3/19/2024
+  - heading "In Progress (1)" [level=2]
+  - heading "Design system updates" [level=3]
+  - paragraph: Update color palette and typography
+  - text: Design
+  - img
+  - text: Emma Wilson
+  - img
+  - text: 3/21/2024
+  - heading "Review (1)" [level=2]
+  - heading "API integration" [level=3]
+  - paragraph: Connect to payment gateway
+  - text: Feature High Priority
+  - img
+  - text: Mike Johnson
+  - img
+  - text: 3/20/2024
+  - heading "Done (1)" [level=2]
+  - heading "Update documentation" [level=3]
+  - paragraph: Add API endpoints documentation
+  - text: Feature
+  - img
+  - text: Lisa Brown
+  - img
+  - text: 3/17/2024
+- link "Made in Bolt":
+  - /url: https://bolt.new
+  - img
+  - text: Made in Bolt
+- button "Hide the Made in Bolt badge":
+  - img
