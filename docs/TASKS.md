@@ -12,7 +12,7 @@ Each task runs in **its own Claude Code session**, following `AGENTS.md`. Requir
 | T04 | Login automation (FR-1)                | T03        | done   | `claude/t04-login-2b6b20`          | https://github.com/jmalp/loop-technical-evaluation/pull/3 |
 | T05 | Data-driven skeleton with TC-01 (FR-2) | T04        | done   | `claude/t05-board-skeleton-fcaa90` | https://github.com/jmalp/loop-technical-evaluation/pull/4 |
 | T06 | Test Cases 2–6                         | T05        | done   | `claude/t06-cases-2-6-a81529`      | https://github.com/jmalp/loop-technical-evaluation/pull/5 |
-| T07 | Docs, final audit and submission prep  | T06        | done   | `claude/t07-docs-audit-d0c661`     |                                                           |
+| T07 | Docs, final audit and submission prep  | T06        | done   | `claude/t07-docs-audit-d0c661`     | https://github.com/jmalp/loop-technical-evaluation/pull/6 |
 
 If your session starts on an app-generated worktree branch, keep that branch (renaming can break the app's PR tracking) and record its real name in the Branch column.
 
