@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Check and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm run check
+
+      # --pass-with-no-tests stays until T04 adds the first test.
+      - run: npm test -- --pass-with-no-tests
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          LOOP_EMAIL: ${{ secrets.LOOP_EMAIL }}
+          LOOP_PASSWORD: ${{ secrets.LOOP_PASSWORD }}
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
