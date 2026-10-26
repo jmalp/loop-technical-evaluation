@@ -27,8 +27,7 @@ jobs:
 
       - run: npm run check
 
-      # --pass-with-no-tests stays until T04 adds the first test.
-      - run: npm test -- --pass-with-no-tests
+      - run: npm test
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
           LOOP_EMAIL: ${{ secrets.LOOP_EMAIL }}

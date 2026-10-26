@@ -34,6 +34,12 @@ export default defineConfig(
     rules: {
       // NFR-05 forbids hard waits outright; recommended only warns.
       'playwright/no-wait-for-timeout': 'error',
+      // Page objects own some assertions as expectXxx() methods (for example
+      // LoginPage.expectLoggedIn), so count those calls as assertions too.
+      'playwright/expect-expect': [
+        'warn',
+        { assertFunctionPatterns: ['^expect[A-Z]'] },
+      ],
     },
   },
   {
@@ -51,8 +57,10 @@ export default defineConfig(
       'playwright/no-force-option': 'error',
       'playwright/no-networkidle': 'error',
       'playwright/no-page-pause': 'error',
+      'playwright/no-wait-for-navigation': 'error',
       'playwright/no-wait-for-selector': 'error',
       'playwright/no-wait-for-timeout': 'error',
+      'playwright/prefer-locator': 'error',
       'playwright/prefer-web-first-assertions': 'error',
     },
   },
