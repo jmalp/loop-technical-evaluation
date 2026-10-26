@@ -12,7 +12,7 @@ Each task runs in **its own Claude Code session**, following `AGENTS.md`. Requir
 | T04 | Login automation (FR-1)                | T03        | done   | `claude/t04-login-2b6b20`          | https://github.com/jmalp/loop-technical-evaluation/pull/3 |
 | T05 | Data-driven skeleton with TC-01 (FR-2) | T04        | done   | `claude/t05-board-skeleton-fcaa90` | https://github.com/jmalp/loop-technical-evaluation/pull/4 |
 | T06 | Test Cases 2–6                         | T05        | done   | `claude/t06-cases-2-6-a81529`      | https://github.com/jmalp/loop-technical-evaluation/pull/5 |
-| T07 | Docs, final audit and submission prep  | T06        | todo   | `task/T07-docs-audit`              |                                                           |
+| T07 | Docs, final audit and submission prep  | T06        | done   | `claude/t07-docs-audit-d0c661`     | https://github.com/jmalp/loop-technical-evaluation/pull/6 |
 
 If your session starts on an app-generated worktree branch, keep that branch (renaming can break the app's PR tracking) and record its real name in the Branch column.
 
@@ -201,7 +201,7 @@ If your session starts on an app-generated worktree branch, keep that branch (re
 
 - **Goal:** a repo a reviewer can understand and run in minutes, and a full audit against the spec.
 - **Depends on:** T06.
-- **ACs:** AC-16, AC-17, AC-18, plus a re-audit of every AC.
+- **ACs:** AC-16, AC-17, plus a re-audit of every AC. AC-18 was removed in SPEC v1.3.
 - **Scope:**
   - `README.md` covers:
     - purpose
@@ -214,19 +214,11 @@ If your session starts on an app-generated worktree branch, keep that branch (re
     - design decisions (POM plus fixtures, data validation, locator strategy, exact tag matching, UI login per test, env-based credentials, CI)
     - how accuracy was checked (spec, reviewer agent, mutation checks, repeat runs)
     - a note on real secrets (SPEC §3, v1.1): Playwright's report, traces and error context record what is typed into the login form, which is accepted only because the demo values are public. With real secrets, log in through an API and reuse `storageState`, and do not upload reports or traces.
-  - `docs/VIDEO_NOTES.md`: a 2–3 minute walkthrough outline with rough timings. It covers:
-    - the problem
-    - repo tour
-    - the data file and the single loop
-    - page objects and fixtures
-    - a live demo of adding a case
-    - the run, the report and CI
-    - how correctness was verified
   - **Full audit:** spec-reviewer checks **every** AC in SPEC §7 and re-runs every mutation check.
   - **Clean-clone dry run:** clone the public repo into the session scratchpad, check out this task's branch, and follow the README steps exactly as written. The suite must be green.
 - **DoD:**
-  - The README and video notes are complete.
+  - The README is complete.
   - The full audit returns PASS.
   - The dry run is green.
-  - Every SPEC §7 row is `done` (or carries the reason it is not implemented, for AC-19).
+  - Every SPEC §7 row is `done`, except AC-18, which SPEC v1.3 removed.
   - The final summary reminds the user of the two user-owned submission steps (SPEC §11): put the public repo link in the Google Form, and record and upload the 2–3 minute video.
