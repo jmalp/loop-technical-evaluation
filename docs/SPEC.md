@@ -1,0 +1,154 @@
+# Specification: Loop Technical Evaluation (2025)
+
+|               |                                                                                                                                                         |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**    | v1.0, approved 2026-10-26                                                                                                                               |
+| **Source**    | Loop Technical Evaluation 2025 (2-page PDF brief, kept outside this repo). This spec paraphrases it.                                                    |
+| **Authority** | This file is the source of truth for _what_ to build. `AGENTS.md` is the source of truth for _how_ to work. `docs/TASKS.md` splits the work into tasks. |
+
+Any change to this file needs the user's approval. See [§10 Spec change log](#10-spec-change-log).
+
+---
+
+## 1. Purpose
+
+Build a Playwright test suite that is **driven by JSON data**. The suite logs in to a demo Asana-like app and checks that given tasks sit in the expected board column with the expected tags. Each scenario is one JSON object, so a new case means new data, not new or repeated code.
+
+## 2. Constraints
+
+These are hard requirements. Per the brief, an evaluation that is not data-driven or not written in JS/TS fails outright.
+
+| ID  | Constraint                                                                                                                                                                                 |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| C-1 | **Language:** TypeScript for all test and support code. JavaScript is allowed only where a tool requires it for its own config file (for example `eslint.config.mjs`). No other languages. |
+| C-2 | **Framework:** Playwright Test (`@playwright/test`), with its dependencies installed and configured in this project.                                                                       |
+| C-3 | **Data-driven:** test scenarios are driven from a JSON object. Adding a scenario must not duplicate code.                                                                                  |
+| C-4 | **Dedicated project:** this repository is a new workspace used only for this evaluation.                                                                                                   |
+| C-5 | **Accuracy:** every value, assertion and claim is double-checked against this spec and the live app before submission. AI-assisted output gets the same check.                             |
+| C-6 | **Delivery:** the code is published in a **public GitHub repository**.                                                                                                                     |
+
+## 3. System under test
+
+| Item             | Value                                                                                                         |
+| ---------------- | ------------------------------------------------------------------------------------------------------------- |
+| App              | Demo Asana-like app, `https://create-asana-like-pr-39y5.bolt.host/`                                           |
+| Base URL         | `BASE_URL` env var. The URL above is the default.                                                             |
+| Login identifier | `LOOP_EMAIL` env var. The brief calls this field "Email"; its demo value is a username, not an email address. |
+| Password         | `LOOP_PASSWORD` env var                                                                                       |
+
+The demo credential values are public (they are given in the brief). They live **only** in `.env.example`, which is committed, and in the local `.env`, which is gitignored and copied from `.env.example`. CI reads them from GitHub Actions repository secrets. They appear nowhere else in code, tests, docs, logs or reports written by the suite.
+
+## 4. Functional requirements
+
+| ID   | Priority | Requirement                                                                                                                                                                                                                           |
+| ---- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FR-1 | Must     | **Login automation.** Open the app, type the credentials into the login form and submit it. Login must succeed: a post-login element is visible and the login form is no longer visible.                                              |
+| FR-2 | Must     | **Board verification, once per test case in §5.** (1) Log in (FR-1). (2) Navigate to the case's project. (3) Verify the task card is in the expected column. (4) Confirm the card's tags.                                             |
+| FR-3 | Could    | **Invalid login.** Wrong credentials show an error and the user stays on the login form. Implement this only if T03 discovery finds a deterministic, visible error message. Otherwise it stays unimplemented and is recorded as such. |
+
+## 5. Test data
+
+The brief mixes straight and curly quotes and sometimes separates tags with `&`. Values are normalized to the plain text below. Tag lists are **exact**: a card must show these tags and no others.
+
+| ID    | Project            | Task                          | Column      | Tags                   |
+| ----- | ------------------ | ----------------------------- | ----------- | ---------------------- |
+| TC-01 | Web Application    | Implement user authentication | To Do       | Feature, High Priority |
+| TC-02 | Web Application    | Fix navigation bug            | To Do       | Bug                    |
+| TC-03 | Web Application    | Design system updates         | In Progress | Design                 |
+| TC-04 | Mobile Application | Push notification system      | To Do       | Feature                |
+| TC-05 | Mobile Application | Offline mode                  | In Progress | Feature, High Priority |
+| TC-06 | Mobile Application | App icon design               | Done        | Design                 |
+
+**Data file:** `tests/data/board-cases.json`, an array of objects with this shape (TC-01 shown):
+
+```json
+{
+  "id": "TC-01",
+  "project": "Web Application",
+  "task": "Implement user authentication",
+  "column": "To Do",
+  "tags": ["Feature", "High Priority"]
+}
+```
+
+## 6. Non-functional requirements
+
+| ID     | Requirement                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| NFR-01 | **Scalable data.** Adding a board case means adding one JSON object to `tests/data/board-cases.json` and changing no code. Test titles are generated from the data (they include the case ID).                                                                                                                                                                                                                                                                                                         |
+| NFR-02 | **No duplicated test logic.** One spec file and one loop generate every board test. There is no per-case code, no `if`/`switch` on case IDs, and no copy-pasted tests.                                                                                                                                                                                                                                                                                                                                 |
+| NFR-03 | **Page Object Model plus fixtures.** Page objects in `src/pages/` own locators and page actions. Custom fixtures in `src/fixtures/` provide page objects and a logged-in state. Spec files call page objects and do not build raw locators.                                                                                                                                                                                                                                                            |
+| NFR-04 | **User-facing locators.** Use `getByRole`, `getByLabel` and `getByText`, scoped from column to card, so a card is only found inside its expected column. No XPath. No `nth()`/`first()`/`last()` and no styling-class CSS selectors unless there is no accessible alternative; any exception needs a code comment that justifies it.                                                                                                                                                                   |
+| NFR-05 | **Web-first assertions.** Use `await expect(locator)…` matchers that auto-retry. No `page.waitForTimeout`, sleeps or `setTimeout`. No `expect(await locator.isVisible())`. No assertions inside conditionals and no swallowed errors.                                                                                                                                                                                                                                                                  |
+| NFR-06 | **Exact tag match.** Each expected tag matches one of the card's **tag elements** by full, case-sensitive text (`exact: true`) and is visible, **and** the number of tag elements in the card equals the expected count. Order does not matter. Never match a tag as a substring of the whole card: TC-03's title "Design system updates" and TC-06's "App icon design" both contain the tag text "Design".                                                                                            |
+| NFR-07 | **Readable reports.** Each brief step is a `test.step`: Login to Demo App, Navigate to project, Verify column, Verify tags.                                                                                                                                                                                                                                                                                                                                                                            |
+| NFR-08 | **Independent tests.** Every board test (FR-2) logs in through the UI with the `loggedIn` fixture. The login spec (FR-1/FR-3) drives `LoginPage` directly, and the data-integrity test (NFR-10) uses no browser. No test shares state with another. Tests are safe to run in parallel and in any order. No `test.describe.serial`.                                                                                                                                                                     |
+| NFR-09 | **Credential handling.** Credentials and base URL come only from env vars (§3). A required variable that is missing **or empty** fails fast with a clear message that names the variable but never its value. `BASE_URL` falls back to the §3 default when it is missing or empty. Values are never printed or logged. Outside `.env.example`, they never appear in committed files as a credential or as the logged-in identity; discovery snapshots are redacted in code. `.env` is never committed. |
+| NFR-10 | **Validated data.** The board-case data is validated before tests are generated, and a data-integrity test (no browser) covers it. Checks: IDs are unique, every field is non-empty, `column` is one of `To Do`, `In Progress` or `Done`, and `tags` is a non-empty list of unique non-empty strings.                                                                                                                                                                                                  |
+| NFR-11 | **Code quality.** TypeScript `strict` mode, no `any`, and no `@ts-ignore`, `@ts-expect-error` or `eslint-disable` without a written reason. `npm run check` (typecheck, ESLint with typescript-eslint and eslint-plugin-playwright, and Prettier check) passes.                                                                                                                                                                                                                                        |
+| NFR-12 | **Stability.** The full suite passes 3 times in a row with `--repeat-each=3 --retries=0`.                                                                                                                                                                                                                                                                                                                                                                                                              |
+| NFR-13 | **Continuous integration.** A GitHub Actions workflow runs `npm run check` and the test suite on every pull request and on every push to `main`, and uploads the Playwright HTML report as an artifact. It must be green before merge.                                                                                                                                                                                                                                                                 |
+| NFR-14 | **Browser.** Chromium only. Adding another browser is a one-line `projects` change in `playwright.config.ts`.                                                                                                                                                                                                                                                                                                                                                                                          |
+| NFR-15 | **Tests can fail.** Mutation check: changing one value in the data (a column or a tag) makes exactly that case fail, with a message that shows the expected value. A wrong password makes the login test fail.                                                                                                                                                                                                                                                                                         |
+| NFR-16 | **Failure evidence.** Traces are kept on first retry and screenshots only on failure, in the HTML report.                                                                                                                                                                                                                                                                                                                                                                                              |
+
+## 7. Acceptance criteria and traceability
+
+Status is `pending` until the task that owns a criterion lands. That task fills in "Verified by" with the test name or command that proves it.
+
+| AC    | Criterion                                                                                                                                                                                                                     | Covers                   | Task          | Verified by                                                | Status  |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ------------- | ---------------------------------------------------------- | ------- |
+| AC-01 | Public GitHub repo contains this spec, the task board, `AGENTS.md` and the `spec-reviewer` agent.                                                                                                                             | C-4, C-6                 | T01           | spec-reviewer PASS against the brief (T01); `gh repo view` | done    |
+| AC-02 | All test and support code is TypeScript (per C-1), with `@playwright/test` installed and `playwright.config.ts` configured (base URL from env, Chromium, retries, trace, reporters).                                          | C-1, C-2, NFR-14, NFR-16 | T02           | pending                                                    | pending |
+| AC-03 | `npm run check` passes: typecheck, lint and format check.                                                                                                                                                                     | NFR-11                   | T02           | pending                                                    | pending |
+| AC-04 | CI runs check and tests on PRs and pushes to `main`, uploads the report, and is green.                                                                                                                                        | NFR-13                   | T02           | pending                                                    | pending |
+| AC-05 | Credentials and base URL come only from env. A missing value fails fast with the variable name. `.env` is gitignored, `.env.example` holds the demo values, and CI uses repository secrets.                                   | NFR-09                   | T02           | pending                                                    | pending |
+| AC-06 | The live app's structure is captured (ARIA snapshots and locator notes), and all six §5 rows are confirmed against the live app, or a spec change is approved.                                                                | C-5                      | T03           | pending                                                    | pending |
+| AC-07 | The login test fills and submits the login form and asserts a successful login.                                                                                                                                               | FR-1                     | T04           | pending                                                    | pending |
+| AC-08 | Login is a reusable UI fixture, built on the `LoginPage` page object, that board tests use.                                                                                                                                   | FR-1, NFR-03, NFR-08     | T04           | pending                                                    | pending |
+| AC-09 | Board cases live in `tests/data/board-cases.json`, are validated at load, and are covered by a data-integrity test.                                                                                                           | C-3, NFR-10              | T05           | pending                                                    | pending |
+| AC-10 | A single loop in one spec file generates one test per JSON case, with titles from the data and no per-case code.                                                                                                              | C-3, NFR-01, NFR-02      | T05           | pending                                                    | pending |
+| AC-11 | A board test navigates to the project, asserts the card is inside the expected column (scoped locator), and asserts an exact tag match against the card's tag elements (NFR-06), using `test.step`s and web-first assertions. | FR-2, NFR-03 to NFR-07   | T05           | pending                                                    | pending |
+| AC-12 | TC-01 passes.                                                                                                                                                                                                                 | FR-2                     | T05           | pending                                                    | pending |
+| AC-13 | TC-02 to TC-06 pass, and they were added as JSON rows only, with no code change.                                                                                                                                              | FR-2, NFR-01             | T06           | pending                                                    | pending |
+| AC-14 | Mutation check: a wrong column or tag for any case makes exactly that case fail with a readable message, and a wrong password makes the login test fail.                                                                      | NFR-15                   | T04, T05, T06 | pending                                                    | pending |
+| AC-15 | The full suite passes with `--repeat-each=3 --retries=0`.                                                                                                                                                                     | NFR-12                   | T06           | pending                                                    | pending |
+| AC-16 | The README documents purpose, setup, how to run, structure, how to add a case, and design decisions, and shows a CI badge.                                                                                                    | C-6                      | T07           | pending                                                    | pending |
+| AC-17 | Clean-clone dry run: following the README exactly in a fresh clone of the public repo gives a green suite.                                                                                                                    | C-5, C-6                 | T07           | pending                                                    | pending |
+| AC-18 | `docs/VIDEO_NOTES.md` gives a 2–3 minute walkthrough outline for the submission video.                                                                                                                                        | §11                      | T07           | pending                                                    | pending |
+| AC-19 | FR-3 invalid login is implemented with a test, or recorded as not implemented with the reason.                                                                                                                                | FR-3                     | T04           | pending                                                    | pending |
+
+## 8. Decisions
+
+| ID  | Decision                                                                                            | Reason                                                                                                                                              |
+| --- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D-1 | A fixture logs in through the UI before each board test, instead of reusing `storageState`.         | The brief lists "Login to Demo App" as a step of every case. With only a handful of UI tests, speed does not matter, and every test stays isolated. |
+| D-2 | Credentials come from env vars. The public demo values are committed in `.env.example`.             | Reviewers can copy one file and run, while the code still follows real secret handling.                                                             |
+| D-3 | Only Chromium.                                                                                      | Lowers flake risk against a shared demo app. Other browsers are a config line away (NFR-14).                                                        |
+| D-4 | One task per session. Each task works on its own branch with its own PR, and the user merges.       | Small, reviewable changes, and nothing reaches `main` without the user.                                                                             |
+| D-5 | TC-01 is built first as a walking skeleton (T05). TC-02 to TC-06 follow as a data-only batch (T06). | Proves the design end to end, then proves that adding cases needs only data.                                                                        |
+
+## 9. Out of scope
+
+- Browsers other than Chromium (NFR-14).
+- Creating, editing, moving or deleting tasks in the app. The suite only reads.
+- Visual, performance, accessibility and API testing.
+- Negative or edge testing beyond FR-3.
+- Recording the 2–3 minute walkthrough video and submitting the Google Form. The user does both; this repo only provides `docs/VIDEO_NOTES.md`.
+
+## 10. Spec change log
+
+Any change to this file needs the user's explicit approval **before** it is made. To propose one, a session stops, describes the change and the evidence (for example, the live app differs from §5), and asks the user. Once approved, the session records it here and bumps the version.
+
+**The one exception is formatting-only changes:** whitespace and Markdown re-formatting from Prettier (`npm run format`) that change no wording, values or IDs. These need no approval and no entry here.
+
+| Version | Date       | Change                               | Reason        | Approved by          |
+| ------- | ---------- | ------------------------------------ | ------------- | -------------------- |
+| 1.0     | 2026-10-26 | Initial spec, written from the brief | T01 bootstrap | User (plan approval) |
+
+## 11. Submission (user-owned, for reference)
+
+The brief asks for two items, both submitted through Loop's Google Form:
+
+1. A link to the public GitHub repository.
+2. A 2–3 minute video that walks through the code and the thinking behind it.
