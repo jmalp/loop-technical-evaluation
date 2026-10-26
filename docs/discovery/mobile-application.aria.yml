@@ -1,0 +1,50 @@
+- img
+- heading "Projects" [level=1]
+- navigation:
+  - button "Web Application Main web application development":
+    - heading "Web Application" [level=2]
+    - paragraph: Main web application development
+  - button "Mobile Application Native mobile app development":
+    - heading "Mobile Application" [level=2]
+    - paragraph: Native mobile app development
+  - button "Marketing Campaign Q2 Marketing initiatives":
+    - heading "Marketing Campaign" [level=2]
+    - paragraph: Q2 Marketing initiatives
+- banner:
+  - heading "Mobile Application" [level=1]
+  - paragraph: Native mobile app development
+  - button "Logout":
+    - img
+    - text: Logout
+- main:
+  - heading "To Do (1)" [level=2]
+  - heading "Push notification system" [level=3]
+  - paragraph: Implement push notifications for iOS and Android
+  - text: Feature
+  - img
+  - text: David Kim
+  - img
+  - text: 3/27/2024
+  - heading "In Progress (1)" [level=2]
+  - heading "Offline mode" [level=3]
+  - paragraph: Enable offline data synchronization
+  - text: Feature High Priority
+  - img
+  - text: Rachel Green
+  - img
+  - text: 3/23/2024
+  - heading "Review (0)" [level=2]
+  - heading "Done (1)" [level=2]
+  - heading "App icon design" [level=3]
+  - paragraph: Create app icons for all required sizes
+  - text: Design
+  - img
+  - text: Emma Wilson
+  - img
+  - text: 3/14/2024
+- link "Made in Bolt":
+  - /url: https://bolt.new
+  - img
+  - text: Made in Bolt
+- button "Hide the Made in Bolt badge":
+  - img

@@ -8,7 +8,7 @@ Each task runs in **its own Claude Code session**, following `AGENTS.md`. Requir
 | --- | -------------------------------------- | ---------- | ------ | ------------------------------- | --------------------------------------------------------- |
 | T01 | Spec and repo bootstrap                | none       | done   | `main` (initial commit)         | none (initial commit)                                     |
 | T02 | Scaffold, tooling and CI               | T01        | done   | `claude/t02-scaffold-ci-a31f71` | https://github.com/jmalp/loop-technical-evaluation/pull/1 |
-| T03 | Live app discovery and spec fact check | T02        | todo   | `task/T03-discovery`            |                                                           |
+| T03 | Live app discovery and spec fact check | T02        | done   | `claude/t03-discovery-80c035`   |                                                           |
 | T04 | Login automation (FR-1)                | T03        | todo   | `task/T04-login`                |                                                           |
 | T05 | Data-driven skeleton with TC-01 (FR-2) | T04        | todo   | `task/T05-board-skeleton`       |                                                           |
 | T06 | Test Cases 2–6                         | T05        | todo   | `task/T06-cases-2-6`            |                                                           |

@@ -1,0 +1,13 @@
+- img
+- heading "Project Board Login" [level=1]
+- text: Username
+- textbox "Username"
+- text: Password
+- textbox "Password"
+- button "Sign in"
+- link "Made in Bolt":
+  - /url: https://bolt.new
+  - img
+  - text: Made in Bolt
+- button "Hide the Made in Bolt badge":
+  - img
