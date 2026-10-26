@@ -1,5 +1,6 @@
 import { test as base, type Page } from '@playwright/test';
 import { getCredentials } from '../config/env';
+import { BoardPage } from '../pages/BoardPage';
 import { LoginPage } from '../pages/LoginPage';
 
 /**
@@ -15,6 +16,11 @@ interface Fixtures {
    * fails `@typescript-eslint/no-unused-vars`.
    */
   loggedIn: Page;
+  /**
+   * The board page object on the logged-in page (FR-2). It is built from `loggedIn`, so a board
+   * test that uses it always logs in through the UI first (NFR-08).
+   */
+  boardPage: BoardPage;
 }
 
 export const test = base.extend<Fixtures>({
@@ -29,6 +35,9 @@ export const test = base.extend<Fixtures>({
       await loginPage.expectLoggedIn();
     });
     await use(page);
+  },
+  boardPage: async ({ loggedIn }, use) => {
+    await use(new BoardPage(loggedIn));
   },
 });
 
