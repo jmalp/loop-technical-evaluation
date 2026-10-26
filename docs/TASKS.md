@@ -4,15 +4,15 @@ Each task runs in **its own Claude Code session**, following `AGENTS.md`. Requir
 
 **Status values:** `todo` or `done`. The board on `main` only ever shows these two. A task's own PR sets its row to `done`, and the merge makes that true. Record the PR URL in the row in a follow-up commit after `gh pr create`.
 
-| ID  | Title                                  | Depends on | Status | Branch                          | PR                                                        |
-| --- | -------------------------------------- | ---------- | ------ | ------------------------------- | --------------------------------------------------------- |
-| T01 | Spec and repo bootstrap                | none       | done   | `main` (initial commit)         | none (initial commit)                                     |
-| T02 | Scaffold, tooling and CI               | T01        | done   | `claude/t02-scaffold-ci-a31f71` | https://github.com/jmalp/loop-technical-evaluation/pull/1 |
-| T03 | Live app discovery and spec fact check | T02        | done   | `claude/t03-discovery-80c035`   | https://github.com/jmalp/loop-technical-evaluation/pull/2 |
-| T04 | Login automation (FR-1)                | T03        | done   | `claude/t04-login-2b6b20`       | https://github.com/jmalp/loop-technical-evaluation/pull/3 |
-| T05 | Data-driven skeleton with TC-01 (FR-2) | T04        | todo   | `task/T05-board-skeleton`       |                                                           |
-| T06 | Test Cases 2–6                         | T05        | todo   | `task/T06-cases-2-6`            |                                                           |
-| T07 | Docs, final audit and submission prep  | T06        | todo   | `task/T07-docs-audit`           |                                                           |
+| ID  | Title                                  | Depends on | Status | Branch                             | PR                                                        |
+| --- | -------------------------------------- | ---------- | ------ | ---------------------------------- | --------------------------------------------------------- |
+| T01 | Spec and repo bootstrap                | none       | done   | `main` (initial commit)            | none (initial commit)                                     |
+| T02 | Scaffold, tooling and CI               | T01        | done   | `claude/t02-scaffold-ci-a31f71`    | https://github.com/jmalp/loop-technical-evaluation/pull/1 |
+| T03 | Live app discovery and spec fact check | T02        | done   | `claude/t03-discovery-80c035`      | https://github.com/jmalp/loop-technical-evaluation/pull/2 |
+| T04 | Login automation (FR-1)                | T03        | done   | `claude/t04-login-2b6b20`          | https://github.com/jmalp/loop-technical-evaluation/pull/3 |
+| T05 | Data-driven skeleton with TC-01 (FR-2) | T04        | done   | `claude/t05-board-skeleton-fcaa90` |                                                           |
+| T06 | Test Cases 2–6                         | T05        | todo   | `task/T06-cases-2-6`               |                                                           |
+| T07 | Docs, final audit and submission prep  | T06        | todo   | `task/T07-docs-audit`              |                                                           |
 
 If your session starts on an app-generated worktree branch, keep that branch (renaming can break the app's PR tracking) and record its real name in the Branch column.
 
