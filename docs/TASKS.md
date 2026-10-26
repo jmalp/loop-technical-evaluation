@@ -9,7 +9,7 @@ Each task runs in **its own Claude Code session**, following `AGENTS.md`. Requir
 | T01 | Spec and repo bootstrap                | none       | done   | `main` (initial commit)         | none (initial commit)                                     |
 | T02 | Scaffold, tooling and CI               | T01        | done   | `claude/t02-scaffold-ci-a31f71` | https://github.com/jmalp/loop-technical-evaluation/pull/1 |
 | T03 | Live app discovery and spec fact check | T02        | done   | `claude/t03-discovery-80c035`   | https://github.com/jmalp/loop-technical-evaluation/pull/2 |
-| T04 | Login automation (FR-1)                | T03        | todo   | `task/T04-login`                |                                                           |
+| T04 | Login automation (FR-1)                | T03        | done   | `claude/t04-login-2b6b20`       |                                                           |
 | T05 | Data-driven skeleton with TC-01 (FR-2) | T04        | todo   | `task/T05-board-skeleton`       |                                                           |
 | T06 | Test Cases 2–6                         | T05        | todo   | `task/T06-cases-2-6`            |                                                           |
 | T07 | Docs, final audit and submission prep  | T06        | todo   | `task/T07-docs-audit`           |                                                           |
@@ -213,6 +213,7 @@ If your session starts on an app-generated worktree branch, keep that branch (re
     - how to add a case (one JSON object, with an example)
     - design decisions (POM plus fixtures, data validation, locator strategy, exact tag matching, UI login per test, env-based credentials, CI)
     - how accuracy was checked (spec, reviewer agent, mutation checks, repeat runs)
+    - a note on real secrets (SPEC §3, v1.1): Playwright's report, traces and error context record what is typed into the login form, which is accepted only because the demo values are public. With real secrets, log in through an API and reuse `storageState`, and do not upload reports or traces.
   - `docs/VIDEO_NOTES.md`: a 2–3 minute walkthrough outline with rough timings. It covers:
     - the problem
     - repo tour
