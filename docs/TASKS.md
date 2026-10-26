@@ -144,7 +144,7 @@ If your session starts on an app-generated worktree branch, keep that branch (re
   1. Write `tests/unit/board-cases.data.spec.ts` first. It is browser-free: no `page` fixture, so no browser launches. It checks that the real data passes validation. It also checks that the validator rejects bad input with clear messages: a duplicate ID, an empty field, an unknown column, empty tags and duplicate tags. Watch it fail.
   2. `src/data/boardCases.ts` exports:
      - the `BoardCase` type
-     - a `COLUMNS` constant (`To Do`, `In Progress`, `Done`)
+     - a `COLUMNS` constant (`To Do`, `In Progress`, `Review`, `Done`), the four columns every board shows (SPEC v1.2, NFR-10)
      - a `validateBoardCases(input: unknown): BoardCase[]` function
      - `boardCases`, the validated contents of `tests/data/board-cases.json`
   3. `tests/data/board-cases.json` with exactly the TC-01 object from SPEC §5.
