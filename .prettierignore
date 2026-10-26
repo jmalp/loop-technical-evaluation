@@ -1,0 +1,9 @@
+# Generated output (node_modules/ and other .gitignore entries are ignored too)
+package-lock.json
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# ARIA snapshots written by code in T03; keep them byte-for-byte as captured
+docs/discovery/*.yml
